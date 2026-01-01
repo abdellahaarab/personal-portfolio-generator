@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio Preview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    @media print {
+        body {
+            background: white !important;
+        }
+        .hero {
+            border-radius: 0;
+        }
+    }
+
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .hero {
+      padding: 5rem 1rem;
+      background: linear-gradient(135deg, #0d6efd, #2563eb);
+      color: white;
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .skill-badge {
+      background: #e0e7ff;
+      color: #1e3a8a;
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      margin: 0.25rem;
+      display: inline-block;
+    }
+
+    .card {
+      border: none;
+      border-radius: 1.25rem;
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+    }
+
+    footer {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+
+<div>
+
+<div class="text-center my-4">
+  <button onclick="exportPDF()" class="btn btn-primary">
+    <i class="bi bi-file-earmark-pdf"></i> Download as PDF
+  </button>
+</div>
+
+
+<div id="portfolio-pdf">
+<!-- HERO -->
+<section class="hero text-center">
+  <div class="container">
+    <h1 id="name" class="fw-bold display-5 mb-2">Your Name</h1>
+    <p id="title" class="lead mb-3">Professional Title</p>
+    <p id="bio" class="opacity-75 mx-auto" style="max-width: 720px;">
+      Short professional bio goes here.
+    </p>
+
+    <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+      <a id="github" target="_blank" class="btn btn-light btn-sm">
+        <i class="bi bi-github"></i> GitHub
+      </a>
+      <a id="linkedin" target="_blank" class="btn btn-outline-light btn-sm">
+        <i class="bi bi-linkedin"></i> LinkedIn
+      </a>
+      <span id="email" class="btn btn-light btn-sm disabled">
+        <i class="bi bi-envelope"></i> email@example.com
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section class="py-5">
+  <div class="container">
+
+    <!-- SKILLS -->
+    <div class="mb-5">
+      <h3 class="section-title">Skills</h3>
+      <div id="skills"></div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="mb-5">
+      <h3 class="section-title">Projects</h3>
+      <div class="row g-4" id="projects"></div>
+    </div>
+
+    <!-- EXPERIENCE -->
+    <div class="mb-5">
+      <h3 class="section-title">Experience</h3>
+      <div class="row g-4" id="experience"></div>
+    </div>
+
+  </div>
+</section>
+</div>
+
+
+<footer class="text-center py-4 bg-white border-top">
+  © <span id="year"></span> Portfolio Preview
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  const data = JSON.parse(localStorage.getItem("portfolioData"));
+
+  if (!data) {
+    alert("No portfolio data found. Please go back and fill the form.");
+  } else {
+
+    // BASIC INFO
+    document.getElementById("name").textContent = data.name || "";
+    document.getElementById("title").textContent = data.title || "";
+    document.getElementById("bio").textContent = data.bio || "";
+
+    // LINKS
+    if (data.github) document.getElementById("github").href = data.github;
+    if (data.linkedin) document.getElementById("linkedin").href = data.linkedin;
+    if (data.email) document.getElementById("email").textContent = data.email;
+
+    // SKILLS
+    const skillsBox = document.getElementById("skills");
+    if (data.skills) {
+      data.skills.split(",").forEach(skill => {
+        const span = document.createElement("span");
+        span.className = "skill-badge";
+        span.textContent = skill.trim();
+        skillsBox.appendChild(span);
+      });
+    }
+
+    // PROJECTS
+    const projectsBox = document.getElementById("projects");
+    if (data.projects) {
+      data.projects.split("\n").forEach(project => {
+        if (project.trim()) {
+          projectsBox.innerHTML += `
+            <div class="col-md-6">
+              <div class="card p-4 h-100">
+                <h5 class="fw-semibold">${project.split("-")[0]}</h5>
+                <p class="text-muted small mb-0">
+                  ${project.split("-").slice(1).join("-")}
+                </p>
+              </div>
+            </div>
+          `;
+        }
+      });
+    }
+
+    // EXPERIENCE
+    const experienceBox = document.getElementById("experience");
+    if (data.experience) {
+      data.experience.split("\n").forEach(exp => {
+        if (exp.trim()) {
+          experienceBox.innerHTML += `
+            <div class="col-md-6">
+              <div class="card p-4 h-100">
+                <h6 class="fw-semibold mb-1">${exp}</h6>
+              </div>
+            </div>
+          `;
+        }
+      });
+    }
+  }
+</script>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function exportPDF() {
+    const element = document.getElementById("portfolio-pdf");
+
+    const opt = {
+      margin:       0.5,
+      filename:     'portfolio.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  {
+        scale: 2,
+        useCORS: true
+      },
+      jsPDF:        {
+        unit: 'in',
+        format: 'a4',
+        orientation: 'portrait'
+      }
+    };
+
+    html2pdf().set(opt).from(element).save();
+  }
+</script>
+
+</body>
+</html>
