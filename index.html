@@ -166,6 +166,21 @@
         </div>
       </div>
 
+      <!-- TEMPLATE SELECTOR -->
+        <div class="mb-5">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="step">6</div>
+            <h5 class="section-title mb-0">Choose Template</h5>
+        </div>
+
+        <select id="template" class="form-select">
+            <option value="modern">Modern (Default)</option>
+            <option value="classic">Classic</option>
+            <option value="minimal">Minimal</option>
+        </select>
+        </div>
+
+
       <!-- ACTIONS -->
       <div class="d-flex justify-content-end gap-3">
         <button class="btn btn-outline-secondary" onclick="resetData()">
@@ -189,25 +204,33 @@
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  function saveData() {
-    const data = {
-      name: name.value,
-      title: title.value,
-      bio: bio.value,
-      skills: skills.value,
-      projects: projects.value,
-      experience: experience.value,
-      github: github.value,
-      linkedin: linkedin.value,
-      email: email.value
-    };
-    localStorage.setItem("portfolioData", JSON.stringify(data));
-  }
+    function saveData() {
+        const data = {
+            name: name.value,
+            title: title.value,
+            bio: bio.value,
+            skills: skills.value,
+            projects: projects.value,
+            experience: experience.value,
+            github: github.value,
+            linkedin: linkedin.value,
+            email: email.value,
+            template: template.value
+        };
+
+        localStorage.setItem("portfolioData", JSON.stringify(data));
+    }
+
 
   function resetData() {
     localStorage.removeItem("portfolioData");
     document.querySelectorAll("input, textarea").forEach(el => el.value = "");
   }
+  
+  if (saved && saved.template) {
+    document.getElementById("template").value = saved.template;
+    }
+
 
   // Auto-load saved data
   const saved = JSON.parse(localStorage.getItem("portfolioData"));

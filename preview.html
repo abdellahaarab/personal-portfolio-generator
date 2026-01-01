@@ -11,6 +11,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    /* ===== MODERN ===== */
+    .template-modern .hero {
+    background: linear-gradient(135deg, #0d6efd, #2563eb);
+    }
+
+    /* ===== CLASSIC ===== */
+    .template-classic .hero {
+    background: #0f172a;
+    }
+    .template-classic .section-title {
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+    }
+
+    /* ===== MINIMAL ===== */
+    .template-minimal .hero {
+    background: #ffffff;
+    color: #0f172a;
+    }
+    .template-minimal .hero p {
+    color: #475569;
+    }
+    .template-minimal .skill-badge {
+    background: #f1f5f9;
+    color: #334155;
+    }
+
     @media print {
         body {
             background: white !important;
@@ -61,7 +88,7 @@
   </style>
 </head>
 
-<div>
+<body id="templateRoot">
 
 <div class="text-center my-4">
   <button onclick="exportPDF()" class="btn btn-primary">
@@ -190,6 +217,20 @@
       });
     }
   }
+
+
+//   const data = JSON.parse(localStorage.getItem("portfolioData"));
+
+    if (data && data.template) {
+    document
+        .getElementById("templateRoot")
+        .classList.add(`template-${data.template}`);
+    } else {
+    document
+        .getElementById("templateRoot")
+        .classList.add("template-modern");
+    }
+
 </script>
 
 
